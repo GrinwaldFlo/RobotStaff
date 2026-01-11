@@ -13,7 +13,12 @@ The full website is for an unique association. Each association wanting to use t
 ## Technologies
 
 It is hosted in a standard PHP 8.4 / MARIADB server. 
-Framework: Laravel with Breeze (Inertia + Vue)
+
+A fresh install is provided:
+- Framework: Laravel with Breeze (Inertia + Vue)
+- Authentification system: Laravel
+- Testing framework: Pest
+- Laravel Boost is installed
 
 ## General behaviour
 
@@ -168,9 +173,6 @@ And a contact view :
 Shows a grid with all staff and their contact information.
 
 ## Implementation Clarifications
-
-### Project Status
-- This is a brand new empty project
 
 ### Authentication
 - **Staff authentication**: Uses Laravel's built-in session/cookie system with custom token-based identification
