@@ -8,6 +8,13 @@ It will provide:
 - Staff assignation
 - Multiple tools modules
 
+The full website is for an unique association. Each association wanting to use that will build it's own instance.
+
+## Technologies
+
+It is hosted in a standard PHP 8.4 / MARIADB server. 
+Framework: Laravel with Breeze (Inertia + Vue)
+
 ## General behaviour
 
 - When a field is changed, it should be directly updated without passing by a submit button. All changes are live
@@ -25,10 +32,11 @@ It will provide:
 
 - They will have a real account with email and password.
 - They can create events, manage staff registrations, and assign staff to events.
+- Admin can see all events
 
 #### Staff
 
-- Thier account is identified by a unique username and an email. They do not need a password.
+- Their account is identified by a unique username and an email. They do not need a password.
 - They can register for events and view their assigned events.
 - They can update their availability for events.
 - They can view their schedule.
@@ -44,45 +52,117 @@ It will provide:
 ### Staff Registration
  
  - Staff can register for events by selecting the roles they are interested in.
- - In the registration page, we can first choose the event from a dropdown list of upcoming events.
+ - In the registration page, we can first choose the event from a list of upcoming events.
  - Staff can update their availability for specific dates and times.
  - If the staff already interested in an event, we can show a message indicating that they have already registered for that event.
  
  - Registration steps:
     1. User is asked if they are a new or returning staff member. 
     1. For new memeber, it asks for username, email, phone number and a free text field for their skills or experience.
-    1. After that, they can select the event from a dropdown list of upcoming events.
+    1. After that, they can select the event from a list of upcoming events.
     1. They can check all roles they are interested in, 
 
 
-## Pages structure
+## Site structure
 
-- Index: 
-    - Small custom presentation of the association
-    - If the staff is recognized (bases in the cookie), it can show all event they are registered. It shows also all other available events. (they can click to go to the specific event page)
-    - If the staff is not recognized, it will invite the staff to enter their email, so they will received a connection link to this index page. It will show also all future events with dates and small description.
-- Staff
-    - This page is available only if the staff is logged, go back to home if not
-    - Here the staff can change their information: First Name, Last name, phone number, city they live (just the city, not the full address), languages they speak, comment, optional photo
-- Event/{tagname}:
-    - This page is available only if the staff is logged
-    - If tagname is wrong, go back to home
-    - It show the long description and all available informations
-    - If the staff is not yet registered for the event, they can tell they are in. It will directly go to the next part
-    - If they are already registered, they can
-      - Cancel their participation
-      - they can select up to three role by order of preference
-      - add a comment
-      - select their availability by half day resolution (morning / afternoon)
-      - they can tell if they want to help before the contest (checkbox)
-      - Tell their affiliation with other teams
-      - tell if it is their first participation (checkbox)
-      - They will have a flag telling their registration is complete
-      - Once the admin has validated thier role, it will be displayed here
-- Admin/Index:
-    - Page for admin, with login request
-    - It will list all events
-- Admin/Event/{tagname}
-    - Allows to edit all informations of the event
-- Admin/Event/{tagname}/staff
-    - List all staff with their favorit role or the final assigned role if present, show availability days
+- index: Welcom page
+- Staff: Edit personal informations
+- Event/{tagname}: Staff edit their attendance
+- Admin/Index: List all event, edit website preference
+- Admin/Event/{tagname}: edit all informations of the event
+- Admin/Event/{tagname}/staff: List all staff with their favorit role or the final assigned role if present, show availability days
+
+## Page details
+
+### /index
+
+It shows a small custom presentation of the association, a logo.
+It does not propose to log for admin. (They will go specifically to /admin).
+If an user is not recognized and goes to other pages, they are redirected here.
+
+#### If the staff is recognized
+
+If the staff is recognized (based in the cookie), it can show all event they are registered. 
+It shows also all other available events. (they can click to go to the specific event page).
+There is a logout button.
+The staff is kept connected for 60 days, reseting each time they come back.
+They can go to /staff to edit thier personal informations
+
+#### If the stiff is not recognized
+
+If the staff is not recognized, there are two options
+
+- Propose for new staff to enter their username and email. Then they will receive an email with a connection link and will be treated as a recognized staff
+- Propose the staff to enter their username OR email, they will receive an email with a connection link and will be treated as a recognized staff
+
+### /staff
+
+This page is available only if the staff is logged, go back to home if not
+Here the staff can change their information: 
+
+- First Name
+- Last name
+- phone number
+- city they live (just the city, not the full address)
+- languages they speak
+- comment
+- optional photo
+
+There is also an action to suppress all their data from the website.
+
+### /event/{tagname}
+
+This page is available only if the staff is logged.
+If tagname is wrong, go back to home.
+It show the long description and all available informations for the event.
+If the staff is not yet registered for the event, they can tell they are in. It will change it's state to registered.
+
+If the staff is registered, they can:
+
+- Cancel their participation
+- Select up to three role by order of preference
+- add a comment
+- select their availability by half day resolution (morning / afternoon)
+- they can tell if they want to help before the contest (checkbox)
+- Tell their affiliation with other teams
+- tell if it is their first participation (checkbox)
+
+They will see:
+- A flag telling their registration is complete or not (if everyhing is correctly filled)
+- If the admin has validated their participation
+- If the admin has validated their final role
+- A link to the Whatsapp group
+- Links to documents to read before the event
+
+### /admin
+
+Page for admin, it will ask for user/password
+It will list all events with agreated informations (registered staff count, dates)
+They can edit website preference: Small description of the association, logo, website, ling to general Whatsapp channel.
+We can create a new event or copy an event.
+
+### /admin/event/{tagname}
+
+Admin can edit informations about the event
+
+- Title
+- Small Description
+- Description
+- Start date
+- End date
+- Available roles (Designation, number required, links to specific document)
+- Links to WhatsApp group
+- Links to all general documents
+
+### /admin/event/{tagname}/staff
+
+List all staff with their favorit role or the final assigned role if present, show availability days.
+
+Allows to validate the staff venue.
+Allows to set the final role for each staff. It could be a dropdown with their prefered roles in order, then all other roles.
+
+There is an availability view:
+Shows a grid with all staff and their availability. 
+
+And a contact view :
+Shows a grid with all staff and their contact information.
