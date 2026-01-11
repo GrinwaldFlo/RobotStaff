@@ -166,3 +166,67 @@ Shows a grid with all staff and their availability.
 
 And a contact view :
 Shows a grid with all staff and their contact information.
+
+## Implementation Clarifications
+
+### Project Status
+- This is a brand new empty project
+
+### Authentication
+- **Staff authentication**: Uses Laravel's built-in session/cookie system with custom token-based identification
+  - Token is stored in the database linked to each staff member
+  - Email with connection links are sent directly without queue system
+  - Staff sessions last 60 days, refreshed on each visit
+- **Admin authentication**: Uses Laravel's built-in authentication system
+  - Simple admin/staff distinction (no role-based permissions for admins)
+
+### Development
+- Vue components: Implemented as needed, prioritizing reusable components
+- Localization: Laravel's localization system with translation files for English and French
+  - Only UI elements are translated
+  - Database content (event descriptions, etc.) stored in a single language
+
+### Data Model
+- Staff can register for multiple events
+- For each event, staff can select multiple preferred roles (up to 3 in order of preference)
+- Admins assign the final role for each staff member per event
+- **Event Roles**: Each event has custom roles (not predefined globally)
+- **Event Copy**: Duplicates event structure and roles, but NOT staff registrations
+- **Business Rules**:
+  - Staff cannot register for events that have already passed
+  - Admins CAN over-assign roles (assign more staff than needed)
+
+### File Management
+- Staff photos and event logos stored locally in Laravel storage
+- **Image formats**: Only JPG and PNG allowed
+- **Image size**: If uploaded images are larger than 1000x1000 pixels, they will be automatically resized to this maximum dimension (maintaining aspect ratio)
+
+### Availability System
+- Multi-day events: Staff select availability with half-day resolution (morning/afternoon) for each day separately
+
+### Staff Registration Flow
+- When staff first register with email/username, account is created immediately with a token
+- After clicking email link, staff can immediately register for events
+- Index page shows information banner if staff profile is incomplete, inviting them to fill missing information
+
+### Team Affiliation
+- Simple text field for staff to mention which teams they're affiliated with
+- No business logic or validation
+
+### Links & Documents
+- WhatsApp group links: Simple text fields containing URLs
+- Document links: Simple text fields containing URLs
+- No file upload functionality for documents
+
+### Notifications
+Email notifications are sent in the following scenarios:
+
+#### Staff Notifications:
+- Admin validates their participation for an event
+- Admin assigns them a final role
+- Admin sends an event reminder with all information
+
+#### Admin Notifications:
+- New staff registers for an event
+- Staff changes their role preferences or availability
+- **Cooldown mechanism**: Maximum 1 email every 5 minutes per staff member (to prevent spam from multiple rapid changes)
