@@ -174,42 +174,60 @@ Shows a grid with all staff and their contact information.
 
 ## Implementation Clarifications
 
+### Current state
+
+A default template has been set. Feel free to remove all unnecessary files.
+
 ### Authentication
 - **Staff authentication**: Uses Laravel's built-in session/cookie system with custom token-based identification
   - Token is stored in the database linked to each staff member
   - Email with connection links are sent directly without queue system
   - Staff sessions last 60 days, refreshed on each visit
+  - When staff click the email link, they are immediately logged in (this counts as email validation)
 - **Admin authentication**: Uses Laravel's built-in authentication system
   - Simple admin/staff distinction (no role-based permissions for admins)
+  - Brute force protection provided by Laravel's built-in rate limiting
 
 ### Development
 - Vue components: Implemented as needed, prioritizing reusable components
 - Localization: Laravel's localization system with translation files for English and French
   - Only UI elements are translated
   - Database content (event descriptions, etc.) stored in a single language
+  - Language detection: Browser detection by default, with manual selector available
+- UI Framework: Tailwind CSS for mobile-first design
+- Visual Feedback: Checkmark appears next to fields when changes are auto-saved
 
 ### Data Model
 - Staff can register for multiple events
-- For each event, staff can select multiple preferred roles (up to 3 in order of preference)
+- For each event, staff can select multiple preferred roles (1 to 3 in order of preference)
 - Admins assign the final role for each staff member per event
 - **Event Roles**: Each event has custom roles (not predefined globally)
 - **Event Copy**: Duplicates event structure and roles, but NOT staff registrations
+  - Tagname is requested before copying the event
 - **Business Rules**:
   - Staff cannot register for events that have already passed
+  - Staff can only see future events and past events they participated in
   - Admins CAN over-assign roles (assign more staff than needed)
 
 ### File Management
 - Staff photos and event logos stored locally in Laravel storage
 - **Image formats**: Only JPG and PNG allowed
-- **Image size**: If uploaded images are larger than 1000x1000 pixels, they will be automatically resized to this maximum dimension (maintaining aspect ratio)
+- **Image size**: If uploaded images are larger than 1000x1000 pixels, they will be automatically resized to this maximum dimension (maintaining aspect ratio, not cropped)
 
 ### Availability System
 - Multi-day events: Staff select availability with half-day resolution (morning/afternoon) for each day separately
+- Default behavior: All half-days are selected (available) by default when staff registers
 
 ### Staff Registration Flow
 - When staff first register with email/username, account is created immediately with a token
-- After clicking email link, staff can immediately register for events
+- After clicking email link, staff are immediately logged in and can register for events
 - Index page shows information banner if staff profile is incomplete, inviting them to fill missing information
+- **Profile Completeness**: A profile is considered complete when first_name, last_name, and phone_number are filled (all other fields are optional)
+
+### Staff Data Deletion
+- When staff request data deletion, their data is anonymized (not deleted)
+- This preserves statistics and historical data for admins while protecting privacy
+- Anonymization removes: name, email, username, phone, city, photo, and other personal identifiers
 
 ### Team Affiliation
 - Simple text field for staff to mention which teams they're affiliated with
@@ -220,6 +238,10 @@ Shows a grid with all staff and their contact information.
 - Document links: Simple text fields containing URLs
 - No file upload functionality for documents
 
+### Email Configuration
+- Emails sent using standard PHP mail feature
+- No external email service provider required
+
 ### Notifications
 Email notifications are sent in the following scenarios:
 
@@ -229,6 +251,10 @@ Email notifications are sent in the following scenarios:
 - Admin sends an event reminder with all information
 
 #### Admin Notifications:
-- New staff registers for an event
+- New staff registers for an event (immediate notification for each registration)
 - Staff changes their role preferences or availability
 - **Cooldown mechanism**: Maximum 1 email every 5 minutes per staff member (to prevent spam from multiple rapid changes)
+
+### Testing
+- All features must be tested using Pest
+- Comprehensive test coverage for critical paths and edge cases

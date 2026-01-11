@@ -306,23 +306,60 @@ Tracks email notifications sent to prevent spam.
 
 ### Registration Completeness
 A staff registration is considered "complete" when:
-- At least one role preference is selected
+- At least one role preference is selected (1 to 3 preferences allowed)
 - Availability is specified for at least one half-day
-- All required fields in staff profile are filled (first_name, last_name, phone_number, city)
+- All required fields in staff profile are filled (first_name, last_name, phone_number)
+- Optional fields (city, languages, comment, photo) do NOT affect completeness
+
+### Profile Completeness
+A staff profile is considered "complete" when:
+- first_name is filled
+- last_name is filled
+- phone_number is filled
+- All other fields (city, languages, comment, photo) are optional
+
+### Event Visibility Rules
+- Staff can see all future events (events that haven't ended yet)
+- Staff can only see past events they have participated in (registered for)
+- Admins can see all events (past, present, and future)
+
+### Staff Data Deletion
+- When staff request data deletion, records are anonymized (not deleted)
+- Anonymization removes all personal identifiers while preserving statistical data
+- Fields to anonymize: username, email, first_name, last_name, phone_number, city, languages, comment, photo_path
+- Event registration records remain with anonymized staff reference for admin reporting
+
+### Availability Defaults
+- When staff first register for an event, all half-days default to "available" (checked)
+- Staff can then deselect specific half-days they're unavailable
 
 ### Email Cooldown
 - Maximum 1 email per staff member every 5 minutes
 - Implemented by checking `email_notifications` table for recent sends
 - Applies to notification types: `staff_preferences_changed`
+- Does NOT apply to: `new_staff_registration` (admins receive immediate notifications)
 
 ### Token Management
 - Staff authentication tokens expire after 60 days
 - Token expiration is refreshed on each login
 - Expired tokens should be regenerated when staff requests new login link
+- Clicking email link immediately logs staff in (counts as email validation)
 
 ### Role Assignment
 - Admins can over-assign roles (more staff than `number_required`)
 - Assigned role must be from the same event as the registration
+- Staff can select 1 to 3 role preferences (not required to select exactly 3)
+
+### Event Copy
+- When copying an event, admin must provide new tagname before copy completes
+- Copied event includes: event details, roles, and event days structure
+- Does NOT copy: staff registrations, availability, or preferences
+
+### Image Handling
+- Supported formats: JPG, PNG only
+- Maximum dimensions: 1000x1000 pixels
+- Auto-resize behavior: Maintains aspect ratio (fit within 1000x1000), does NOT crop
+- Smaller images are kept at original size
 
 ---
 
