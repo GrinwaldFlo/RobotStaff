@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "RobotStaff", "RobotStaff.phpproj", "{8C2B2B70-DF92-36CC-1D3E-F622C5CBCF8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C2B2B70-DF92-36CC-1D3E-F622C5CBCF8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C2B2B70-DF92-36CC-1D3E-F622C5CBCF8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C2B2B70-DF92-36CC-1D3E-F622C5CBCF8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C2B2B70-DF92-36CC-1D3E-F622C5CBCF8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CEB8E0D9-F90E-4573-BEF1-56B4B9BB80CB}
+	EndGlobalSection
+EndGlobal
