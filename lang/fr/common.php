@@ -16,4 +16,9 @@ return [
     'french' => 'Français',
     'language' => 'Langue',
     'theme' => 'Thème',
+    
+    // Theme options
+    'theme_light' => 'Clair',
+    'theme_dark' => 'Sombre',
+    'theme_system' => 'Système',
 ];
