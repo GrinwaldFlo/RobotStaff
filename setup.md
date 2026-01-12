@@ -1,20 +1,15 @@
-# RobotStaff - Server Installation Guide
+# RobotStaff - Application Installation Guide
 
-This guide provides step-by-step instructions for installing and deploying the RobotStaff application on a remote webserver.
+This guide provides step-by-step instructions for deploying the RobotStaff application on a webserver.
 
-## Prerequisites
+## Server Requirements
 
-Before you begin, ensure your server meets the following requirements:
-
-- **PHP**: >= 8.2
+- **PHP**: >= 8.4
 - **Composer**: Latest version
 - **Node.js**: >= 18.x
 - **NPM**: >= 9.x
 - **Database**: MySQL 8.0+ / PostgreSQL 13+ / SQLite 3.8.8+
 - **Web Server**: Nginx or Apache with mod_rewrite
-- **Git**: For cloning the repository
-
-## System Requirements
 
 ### Required PHP Extensions
 - BCMath
@@ -35,35 +30,7 @@ Before you begin, ensure your server meets the following requirements:
 
 ## Installation Steps
 
-### 1. Server Setup
-
-#### Update System Packages
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-#### Install PHP 8.2 and Required Extensions
-```bash
-sudo apt install -y php8.2 php8.2-fpm php8.2-cli php8.2-common \
-    php8.2-mysql php8.2-xml php8.2-mbstring php8.2-curl \
-    php8.2-zip php8.2-bcmath php8.2-gd php8.2-intl \
-    php8.2-sqlite3
-```
-
-#### Install Composer
-```bash
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-sudo chmod +x /usr/local/bin/composer
-```
-
-#### Install Node.js and NPM
-```bash
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-### 2. Clone the Application
+### 1. Clone the Application
 
 Navigate to your web directory and clone the repository:
 
@@ -79,7 +46,7 @@ sudo chown -R www-data:www-data /var/www/RobotStaff
 sudo chmod -R 755 /var/www/RobotStaff
 ```
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 
 #### Install PHP Dependencies
 ```bash
@@ -91,7 +58,7 @@ composer install --optimize-autoloader --no-dev
 npm install
 ```
 
-### 4. Environment Configuration
+### 3. Environment Configuration
 
 #### Create Environment File
 ```bash
@@ -141,7 +108,7 @@ MAIL_FROM_NAME="${APP_NAME}"
 php artisan key:generate
 ```
 
-### 5. Database Setup
+### 4. Database Setup
 
 #### Create Database
 For MySQL:
@@ -169,7 +136,7 @@ php artisan migrate --force
 php artisan db:seed --force
 ```
 
-### 6. Build Frontend Assets
+### 5. Build Frontend Assets
 
 #### Production Build
 ```bash
@@ -178,7 +145,7 @@ npm run build
 
 This will compile and optimize all Vue.js components and assets using Vite.
 
-### 7. Set Directory Permissions
+### 6. Set Directory Permissions
 
 ```bash
 sudo chown -R www-data:www-data /var/www/RobotStaff
@@ -186,110 +153,7 @@ sudo chmod -R 755 /var/www/RobotStaff/storage
 sudo chmod -R 755 /var/www/RobotStaff/bootstrap/cache
 ```
 
-### 8. Web Server Configuration
-
-#### Option A: Nginx Configuration
-
-Create a new Nginx configuration file:
-```bash
-sudo nano /etc/nginx/sites-available/robotstaff
-```
-
-Add the following configuration:
-```nginx
-server {
-    listen 80;
-    listen [::]:80;
-    server_name yourdomain.com www.yourdomain.com;
-    root /var/www/RobotStaff/public;
-
-    add_header X-Frame-Options "SAMEORIGIN";
-    add_header X-Content-Type-Options "nosniff";
-
-    index index.php;
-
-    charset utf-8;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include fastcgi_params;
-        fastcgi_hide_header X-Powered-By;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-```
-
-Enable the site:
-```bash
-sudo ln -s /etc/nginx/sites-available/robotstaff /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-#### Option B: Apache Configuration
-
-Create a new Apache virtual host:
-```bash
-sudo nano /etc/apache2/sites-available/robotstaff.conf
-```
-
-Add the following configuration:
-```apache
-<VirtualHost *:80>
-    ServerName yourdomain.com
-    ServerAlias www.yourdomain.com
-    DocumentRoot /var/www/RobotStaff/public
-
-    <Directory /var/www/RobotStaff/public>
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    ErrorLog ${APACHE_LOG_DIR}/robotstaff-error.log
-    CustomLog ${APACHE_LOG_DIR}/robotstaff-access.log combined
-</VirtualHost>
-```
-
-Enable required modules and site:
-```bash
-sudo a2enmod rewrite
-sudo a2ensite robotstaff.conf
-sudo systemctl reload apache2
-```
-
-### 9. SSL Certificate Setup (Recommended)
-
-#### Install Certbot
-```bash
-sudo apt install -y certbot
-```
-
-#### For Nginx:
-```bash
-sudo apt install -y python3-certbot-nginx
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
-```
-
-#### For Apache:
-```bash
-sudo apt install -y python3-certbot-apache
-sudo certbot --apache -d yourdomain.com -d www.yourdomain.com
-```
-
-### 10. Optimization & Caching
+### 7. Optimization & Caching
 
 ```bash
 # Cache configuration
@@ -305,7 +169,7 @@ php artisan view:cache
 composer dump-autoload --optimize
 ```
 
-### 11. Queue Worker Setup (Optional but Recommended)
+### 8. Queue Worker Setup (Optional but Recommended)
 
 Create a supervisor configuration for the queue worker:
 
@@ -336,7 +200,7 @@ sudo supervisorctl update
 sudo supervisorctl start robotstaff-worker:*
 ```
 
-### 12. Setup Cron Jobs
+### 9. Setup Cron Jobs
 
 Add Laravel's scheduler to crontab:
 
@@ -419,7 +283,7 @@ sudo chmod -R 755 /var/www/RobotStaff/bootstrap/cache
 - Check `storage/logs/laravel.log` for errors
 - Ensure `.env` file exists and is properly configured
 - Verify database credentials
-- Check PHP error logs: `sudo tail -f /var/log/php8.2-fpm.log`
+- Check PHP error logs: `sudo tail -f /var/log/php8.4-fpm.log`
 
 ### Assets Not Loading
 - Ensure `npm run build` completed successfully
@@ -435,11 +299,10 @@ sudo chmod -R 755 /var/www/RobotStaff/bootstrap/cache
 
 1. **Keep software updated**: Regularly update PHP, Composer, Node.js, and dependencies
 2. **Use strong passwords**: For database and application users
-3. **Enable firewall**: `sudo ufw enable` and allow only necessary ports (80, 443, 22)
-4. **Disable debug mode**: Ensure `APP_DEBUG=false` in production
-5. **Regular backups**: Backup database and uploaded files regularly
-6. **Monitor logs**: Regularly check application and server logs
-7. **Use HTTPS**: Always use SSL certificates in production
+3. **Disable debug mode**: Ensure `APP_DEBUG=false` in production
+4. **Regular backups**: Backup database and uploaded files regularly
+5. **Monitor logs**: Regularly check application and server logs
+6. **Use HTTPS**: Always use SSL certificates in production
 
 ## Support
 
