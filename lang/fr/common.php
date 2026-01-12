@@ -14,4 +14,6 @@ return [
     // Languages
     'english' => 'Anglais',
     'french' => 'Français',
+    'language' => 'Langue',
+    'theme' => 'Thème',
 ];

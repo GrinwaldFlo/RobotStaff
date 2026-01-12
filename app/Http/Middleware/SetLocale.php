@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
@@ -23,9 +23,15 @@ class SetLocale
         $locale = $this->determineLocale($request);
         
         App::setLocale($locale);
-        Session::put('locale', $locale);
+        
+        $response = $next($request);
+        
+        // Set locale cookie if it changed or doesn't exist
+        if (!$request->hasCookie('locale') || $request->cookie('locale') !== $locale) {
+            Cookie::queue('locale', $locale, 525600); // 1 year
+        }
 
-        return $next($request);
+        return $response;
     }
 
     /**
@@ -33,14 +39,14 @@ class SetLocale
      */
     protected function determineLocale(Request $request): string
     {
-        // 1. Check session
-        if (Session::has('locale') && in_array(Session::get('locale'), $this->supportedLocales)) {
-            return Session::get('locale');
-        }
-
-        // 2. Check query parameter
+        // 1. Check query parameter (for switching language)
         if ($request->has('lang') && in_array($request->get('lang'), $this->supportedLocales)) {
             return $request->get('lang');
+        }
+
+        // 2. Check cookie
+        if ($request->hasCookie('locale') && in_array($request->cookie('locale'), $this->supportedLocales)) {
+            return $request->cookie('locale');
         }
 
         // 3. Check browser preference
@@ -49,7 +55,7 @@ class SetLocale
             return $browserLocale;
         }
 
-        // 4. Default
-        return config('app.locale', 'en');
+        // 4. Default to English
+        return 'en';
     }
 }

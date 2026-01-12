@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LanguageButtonGroup from '@/components/LanguageButtonGroup.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -44,6 +45,8 @@ const displayName = computed(() => {
                     </div>
                     
                     <nav class="flex items-center space-x-4">
+                        <LanguageButtonGroup />
+                        
                         <template v-if="staff">
                             <Link
                                 href="/staff"

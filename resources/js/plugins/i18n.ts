@@ -1,10 +1,13 @@
 import type { App } from 'vue';
+import { reactive } from 'vue';
 
 // Translation data loaded from Laravel
 const translations: Record<string, Record<string, string>> = {};
 
-// Current locale
-let currentLocale = 'en';
+// Reactive current locale
+const state = reactive({
+    currentLocale: 'en'
+});
 
 /**
  * Load translations from Laravel
@@ -24,14 +27,21 @@ export function loadTranslations(locale: string, data: Record<string, Record<str
  * Set the current locale
  */
 export function setLocale(locale: string) {
-    currentLocale = locale;
+    state.currentLocale = locale;
+}
+
+/**
+ * Get the current locale
+ */
+export function getLocale(): string {
+    return state.currentLocale;
 }
 
 /**
  * Translate a key with optional replacements
  */
 export function t(key: string, replacements: Record<string, string | number> = {}): string {
-    let translation = translations[currentLocale]?.[key] || key;
+    let translation = translations[state.currentLocale]?.[key] || key;
     
     // Apply replacements
     for (const [placeholder, value] of Object.entries(replacements)) {
