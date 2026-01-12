@@ -26,7 +26,7 @@ watch(
             error(flash.error as string);
         }
     },
-    { deep: true }
+    { deep: true, immediate: true }
 );
 </script>
 
