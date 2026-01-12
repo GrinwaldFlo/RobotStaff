@@ -106,9 +106,9 @@ watch(() => page.props.flash, (flash: any) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <!-- Success Notification -->
         <div class="fixed top-4 right-4 z-50">
-            <Alert v-if="showSuccessMessage" class="w-96 border-green-500 bg-green-50 dark:bg-green-900/20">
-                <CheckCircle class="h-4 w-4 text-green-600 dark:text-green-400" />
-                <AlertDescription class="ml-2 text-green-800 dark:text-green-200">
+            <Alert v-if="showSuccessMessage" class="w-96 border-green-600 bg-green-500 dark:bg-green-700">
+                <CheckCircle class="h-4 w-4 text-white" />
+                <AlertDescription class="ml-2 text-white">
                     {{ successMessage }}
                 </AlertDescription>
             </Alert>
