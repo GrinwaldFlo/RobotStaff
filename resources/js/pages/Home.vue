@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 import type { Event, SitePreference, Staff } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle, XCircle } from 'lucide-vue-next';
 
 interface Props {
     sitePreferences: SitePreference;
@@ -18,9 +19,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const page = usePage();
 
 const isNewStaff = ref(true);
 const showLoginForm = ref(false);
+const showSuccessMessage = ref(false);
+const showErrorMessage = ref(false);
+const successMessage = ref('');
+const errorMessage = ref('');
 
 const registerForm = useForm({
     username: '',
@@ -51,6 +57,24 @@ const submitLogin = () => {
     });
 };
 
+// Watch for flash messages
+watch(() => page.props.flash, (flash: any) => {
+    if (flash?.success) {
+        successMessage.value = flash.success;
+        showSuccessMessage.value = true;
+        setTimeout(() => {
+            showSuccessMessage.value = false;
+        }, 5000);
+    }
+    if (flash?.error) {
+        errorMessage.value = flash.error;
+        showErrorMessage.value = true;
+        setTimeout(() => {
+            showErrorMessage.value = false;
+        }, 5000);
+    }
+}, { deep: true, immediate: true });
+
 const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString();
 };
@@ -58,6 +82,22 @@ const formatDate = (dateStr: string) => {
 
 <template>
     <PublicLayout title="Home" :staff="staff">
+        <!-- Success/Error Notifications -->
+        <div class="fixed top-4 right-4 z-50 space-y-2">
+            <Alert v-if="showSuccessMessage" class="w-96 border-green-500 bg-green-50 dark:bg-green-900/20">
+                <CheckCircle class="h-4 w-4 text-green-600 dark:text-green-400" />
+                <AlertDescription class="ml-2 text-green-800 dark:text-green-200">
+                    {{ successMessage }}
+                </AlertDescription>
+            </Alert>
+            <Alert v-if="showErrorMessage" class="w-96 border-red-500 bg-red-50 dark:bg-red-900/20">
+                <XCircle class="h-4 w-4 text-red-600 dark:text-red-400" />
+                <AlertDescription class="ml-2 text-red-800 dark:text-red-200">
+                    {{ errorMessage }}
+                </AlertDescription>
+            </Alert>
+        </div>
+
         <!-- Site Description -->
         <div class="mb-8 text-center" v-if="sitePreferences.association_description">
             <div v-if="sitePreferences.logo_path" class="mb-4">

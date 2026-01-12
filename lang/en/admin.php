@@ -99,4 +99,9 @@ return [
     'other_roles' => 'Other Roles',
     'registration_validated' => 'Registration validated.',
     'role_assigned' => 'Role assigned.',
+    
+    // Email notifications
+    'email_sent' => 'Email sent successfully.',
+    'validation_email_sent' => 'Validation email sent to staff member.',
+    'role_assignment_email_sent' => 'Role assignment email sent to staff member.',
 ];

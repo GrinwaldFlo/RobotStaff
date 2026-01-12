@@ -60,7 +60,7 @@ class AdminEventStaffController extends Controller
             __('notifications.participation_validated_body', ['event' => $event->name])
         );
 
-        return back()->with('success', __('admin.registration_validated'));
+        return back()->with('success', __('admin.validation_email_sent'));
     }
 
     /**
@@ -94,7 +94,7 @@ class AdminEventStaffController extends Controller
             ])
         );
 
-        return back()->with('success', __('admin.role_assigned'));
+        return back()->with('success', __('admin.role_assignment_email_sent'));
     }
 
     /**

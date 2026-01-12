@@ -71,7 +71,7 @@ class EventRegistrationController extends Controller
         ]);
 
         // Notify admins of new registration
-        $this->notifyAdminsOfNewRegistration($staff, $event);
+        $adminCount = $this->notifyAdminsOfNewRegistration($staff, $event);
 
         return back()->with('success', __('event.registered'));
     }
@@ -198,7 +198,7 @@ class EventRegistrationController extends Controller
     /**
      * Notify all admins of a new registration.
      */
-    protected function notifyAdminsOfNewRegistration($staff, $event): void
+    protected function notifyAdminsOfNewRegistration($staff, $event): int
     {
         $admins = User::all();
 
@@ -221,6 +221,8 @@ class EventRegistrationController extends Controller
                 $event->id
             );
         }
+        
+        return $admins->count();
     }
 
     /**

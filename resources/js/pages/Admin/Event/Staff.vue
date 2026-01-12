@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
+import { ref, computed, watch } from 'vue';
 import type { Event, StaffEventRegistration, EventRole, EventDay } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Check, X, Mail, Phone, MapPin, CheckCircle, XCircle } from 'lucide-vue-next';
 
 interface Props {
@@ -16,8 +17,11 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const page = usePage();
 
 const currentTab = ref('list');
+const showSuccessMessage = ref(false);
+const successMessage = ref('');
 
 const validateRegistration = (registrationId: string) => {
     router.post(`/admin/event/${props.event.tagname}/staff/${registrationId}/validate`, {}, {
@@ -85,10 +89,31 @@ const breadcrumbs = [
     { title: props.event.name, href: `/admin/event/${props.event.tagname}` },
     { title: 'Staff', href: `/admin/event/${props.event.tagname}/staff` },
 ];
+
+// Watch for flash messages
+watch(() => page.props.flash, (flash: any) => {
+    if (flash?.success) {
+        successMessage.value = flash.success;
+        showSuccessMessage.value = true;
+        setTimeout(() => {
+            showSuccessMessage.value = false;
+        }, 5000);
+    }
+}, { deep: true, immediate: true });
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
+        <!-- Success Notification -->
+        <div class="fixed top-4 right-4 z-50">
+            <Alert v-if="showSuccessMessage" class="w-96 border-green-500 bg-green-50 dark:bg-green-900/20">
+                <CheckCircle class="h-4 w-4 text-green-600 dark:text-green-400" />
+                <AlertDescription class="ml-2 text-green-800 dark:text-green-200">
+                    {{ successMessage }}
+                </AlertDescription>
+            </Alert>
+        </div>
+
         <div class="flex flex-col gap-6 p-6">
             <!-- Header -->
             <div class="flex items-center justify-between">
