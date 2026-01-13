@@ -87,6 +87,22 @@
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
             'Noto Color Emoji';
     }
+
+    /* Form field spacing - creates consistent gap between labels and inputs */
+    .form-field {
+        @apply flex flex-col gap-2;
+    }
+    
+    /* Alternative: Apply spacing directly to label when followed by input */
+    label:has(+ input),
+    label:has(+ textarea),
+    label:has(+ select),
+    [data-slot="label"]:has(+ input),
+    [data-slot="label"]:has(+ textarea),
+    [data-slot="label"]:has(+ select),
+    [data-slot="label"]:has(+ [data-slot="input"]) {
+        @apply mb-2;
+    }
 }
 
 :root {
